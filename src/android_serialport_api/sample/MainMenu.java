@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package study.UartGoogleApi;
+package android_serialport_api.sample;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -34,21 +34,20 @@ public class MainMenu extends Activity {
         buttonSetup.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				startActivity(new Intent(MainMenu.this, SerialPortPreferences.class));
-//				startActivity(new Intent(MainMenu.this, SerialPortPreferencesNew.class));
 			}
 		});
 
         final Button buttonConsole = (Button)findViewById(R.id.ButtonConsole);
         buttonConsole.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				startActivity(new Intent(MainMenu.this, SerialPortActivityNew.class));
+				startActivity(new Intent(MainMenu.this, ConsoleActivity.class));
 			}
 		});
 
-        final Button buttonQuit = (Button)findViewById(R.id.ButtonQuit);
-        buttonQuit.setOnClickListener(new View.OnClickListener() {
+        final Button buttonLoopback = (Button)findViewById(R.id.ButtonLoopback);
+        buttonLoopback.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				MainMenu.this.finish();
+				startActivity(new Intent(MainMenu.this, LoopbackActivity.class));
 			}
 		});
     }

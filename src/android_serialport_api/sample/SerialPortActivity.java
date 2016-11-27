@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package study.UartGoogleApi;
+package android_serialport_api.sample;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +44,7 @@ public abstract class SerialPortActivity extends Activity {
 			while(!isInterrupted()) {
 				int size;
 				try {
-					byte[] buffer = new byte[64];
+					byte[] buffer = new byte[4096];
 					if (mInputStream == null) return;
 					size = mInputStream.read(buffer);
 					if (size > 0) {

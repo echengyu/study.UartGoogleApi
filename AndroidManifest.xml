@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="study.UartGoogleApi"
+    package="android_serialport_api.sample"
     android:versionCode="3"
     android:versionName="1.2" >
 
@@ -17,22 +17,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity 
-       	    android:name="study.UartGoogleApi.SerialPortPreferences" 
-			android:label="select_device"
-           	android:theme="@android:style/Theme.Holo.Dialog"
-            android:configChanges="orientation|keyboardHidden"  >
+            android:name="SerialPortPreferences"
+            android:theme="@android:style/Theme.Holo.Dialog" >
         </activity>
         
         <activity 
-       	    android:name="study.UartGoogleApi.SerialPortPreferencesNew" 
-			android:label="select_device"
-           	android:theme="@android:style/Theme.Holo.Dialog"
-            android:configChanges="orientation|keyboardHidden"  >
+            android:name="ConsoleActivity" 
+            android:windowSoftInputMode="stateHidden">
         </activity>
         
         <activity 
-            android:name="study.UartGoogleApi.SerialPortActivityNew" >
+            android:name="LoopbackActivity" >
         </activity>
         
     </application>

@@ -27,7 +27,7 @@ import android.util.Log;
 
 public class SerialPortFinder {
 
-	public class Driver {        
+	public class Driver {
 		public Driver(String name, String root) {
 			mDriverName = name;
 			mDeviceRoot = root;
@@ -35,17 +35,16 @@ public class SerialPortFinder {
 		private String mDriverName;
 		private String mDeviceRoot;
 		Vector<File> mDevices = null;
-		public Vector<File> getDevices() throws IOException {
+		public Vector<File> getDevices() {
 			if (mDevices == null) {
 				mDevices = new Vector<File>();
 				File dev = new File("/dev");
-				File[] files = dev.listFiles();			
-				if (files != null) {
-					for (int i=0; i<files.length; i++) {
-						if (files[i].getAbsolutePath().startsWith(mDeviceRoot)) {
-							Log.d(TAG, "Found new device: " + files[i]);
-							mDevices.add(files[i]);
-						}
+				File[] files = dev.listFiles();
+				int i;
+				for (i=0; i<files.length; i++) {
+					if (files[i].getAbsolutePath().startsWith(mDeviceRoot)) {
+						Log.d(TAG, "Found new device: " + files[i]);
+						mDevices.add(files[i]);
 					}
 				}
 			}
