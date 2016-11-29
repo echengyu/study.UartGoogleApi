@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package android_serialport_api.sample;
+package study.UartGoogleApi;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -43,6 +43,13 @@ public class MainMenu extends Activity {
 				startActivity(new Intent(MainMenu.this, ConsoleActivity.class));
 			}
 		});
+        
+        final Button buttonConsoleList = (Button)findViewById(R.id.ButtonConsoleList);
+        buttonConsoleList.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				startActivity(new Intent(MainMenu.this, ConsoleActivityList.class));
+			}
+		});
 
         final Button buttonLoopback = (Button)findViewById(R.id.ButtonLoopback);
         buttonLoopback.setOnClickListener(new View.OnClickListener() {
@@ -50,5 +57,8 @@ public class MainMenu extends Activity {
 				startActivity(new Intent(MainMenu.this, LoopbackActivity.class));
 			}
 		});
+        
+        
+        startActivity(new Intent(MainMenu.this, ConsoleActivityList.class));
     }
 }

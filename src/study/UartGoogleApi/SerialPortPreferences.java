@@ -14,8 +14,9 @@
  * limitations under the License. 
  */
 
-package android_serialport_api.sample;
+package study.UartGoogleApi;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -34,7 +35,11 @@ public class SerialPortPreferences extends PreferenceActivity {
 
 		mApplication = (Application) getApplication();
 		mSerialPortFinder = mApplication.mSerialPortFinder;
-
+		
+		final SharedPreferences sp = getSharedPreferences("UartApiDeviceInfo", MODE_PRIVATE);
+		String devicesName = sp.getString("DEVICE", "Please Select Devices");
+		String devicesBaudrates = sp.getString("BAUDRATE", "Please Select Baud rates");
+		
 		addPreferencesFromResource(R.xml.serial_port_preferences);
 
 		// Devices
@@ -43,20 +48,22 @@ public class SerialPortPreferences extends PreferenceActivity {
         String[] entryValues = mSerialPortFinder.getAllDevicesPath();
 		devices.setEntries(entries);
 		devices.setEntryValues(entryValues);
-		devices.setSummary(devices.getValue());
+		devices.setSummary(devicesName);
 		devices.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
 				preference.setSummary((String)newValue);
+				sp.edit().putString("DEVICE", (String)newValue).commit();
 				return true;
 			}
 		});
 
 		// Baud rates
 		final ListPreference baudrates = (ListPreference)findPreference("BAUDRATE");
-		baudrates.setSummary(baudrates.getValue());
+		baudrates.setSummary(devicesBaudrates);
 		baudrates.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
 				preference.setSummary((String)newValue);
+				sp.edit().putString("BAUDRATE", (String)newValue).commit();
 				return true;
 			}
 		});

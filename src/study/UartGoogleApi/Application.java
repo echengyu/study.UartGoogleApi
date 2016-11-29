@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package android_serialport_api.sample;
+package study.UartGoogleApi;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class Application extends android.app.Application {
 	public SerialPort getSerialPort() throws SecurityException, IOException, InvalidParameterException {
 		if (mSerialPort == null) {
 			/* Read serial port parameters */
-			SharedPreferences sp = getSharedPreferences("android_serialport_api.sample_preferences", MODE_PRIVATE);
+			SharedPreferences sp = getSharedPreferences("UartApiDeviceInfo", MODE_PRIVATE);
 			String path = sp.getString("DEVICE", "");
 			int baudrate = Integer.decode(sp.getString("BAUDRATE", "-1"));
 

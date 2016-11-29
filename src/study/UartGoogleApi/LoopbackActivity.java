@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package android_serialport_api.sample;
+package study.UartGoogleApi;
 
 import java.io.IOException;
 

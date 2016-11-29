@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-package android_serialport_api.sample;
+package study.UartGoogleApi;
 
 import java.io.IOException;
 
@@ -33,7 +33,6 @@ public class ConsoleActivity extends SerialPortActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.console);
 
-//		setTitle("Loopback test");
 		mReception = (EditText) findViewById(R.id.EditTextReception);
 
 		EditText Emission = (EditText) findViewById(R.id.EditTextEmission);
