@@ -13,13 +13,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:text="Setup" />
-
-    <Button
-        android:id="@+id/ButtonConsole"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="Console" />
     
     <Button
         android:id="@+id/ButtonConsoleList"

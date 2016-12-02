@@ -36,13 +36,6 @@ public class MainMenu extends Activity {
 				startActivity(new Intent(MainMenu.this, SerialPortPreferences.class));
 			}
 		});
-
-        final Button buttonConsole = (Button)findViewById(R.id.ButtonConsole);
-        buttonConsole.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				startActivity(new Intent(MainMenu.this, ConsoleActivity.class));
-			}
-		});
         
         final Button buttonConsoleList = (Button)findViewById(R.id.ButtonConsoleList);
         buttonConsoleList.setOnClickListener(new View.OnClickListener() {
