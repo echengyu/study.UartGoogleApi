@@ -29,6 +29,7 @@ public class Application extends android.app.Application {
 
 	public SerialPortFinder mSerialPortFinder = new SerialPortFinder();
 	private SerialPort mSerialPort = null;
+	
 
 	public SerialPort getSerialPort() throws SecurityException, IOException, InvalidParameterException {
 		if (mSerialPort == null) {
@@ -52,6 +53,44 @@ public class Application extends android.app.Application {
 		if (mSerialPort != null) {
 			mSerialPort.close();
 			mSerialPort = null;
+		}
+	}
+	
+	/* ttyUSB0 */
+	private SerialPort mSerialPortTtyUsb0 = null;
+	private String pathTtyUsb0 = "/dev/ttyUSB0";
+	private int baudrateTtyUsb0 = 38400;
+	
+	public SerialPort getSerialPortTtyUsb0() throws SecurityException, IOException, InvalidParameterException {
+		if (mSerialPortTtyUsb0 == null) {
+			mSerialPortTtyUsb0 = new SerialPort(new File(pathTtyUsb0), baudrateTtyUsb0, 0);
+		} 
+		return mSerialPortTtyUsb0;
+	}
+	
+	public void closeSerialPortTtyUsb0() {
+		if (mSerialPortTtyUsb0 != null) {
+			mSerialPortTtyUsb0.close();
+			mSerialPortTtyUsb0 = null;
+		}
+	}
+	
+	/* ttyUSB1 */DE
+	private SerialPort mSerialPortTtyUsb1 = null;
+	private String pathTtyUsb1 = "/dev/ttyUSB1";
+	private int baudrateTtyUsb1 = 38400;
+	
+	public SerialPort getSerialPortTtyUsb1() throws SecurityException, IOException, InvalidParameterException {
+		if (mSerialPortTtyUsb1 == null) {
+			mSerialPortTtyUsb1 = new SerialPort(new File(pathTtyUsb1), baudrateTtyUsb1, 0);
+		} 
+		return mSerialPortTtyUsb1;
+	}
+	
+	public void closeSerialPortTtyUsb1() {
+		if (mSerialPortTtyUsb1 != null) {
+			mSerialPortTtyUsb1.close();
+			mSerialPortTtyUsb1 = null;
 		}
 	}
 }

@@ -19,7 +19,21 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="ConsoleList" />    
+        android:text="ConsoleList" /> 
+        
+    <Button
+        android:id="@+id/ButtonTtyUsb0"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="ttyUSB0" />  
+        
+    <Button
+        android:id="@+id/ButtonTtyUsb1"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="ttyUSB1" />      
 
     <Button
         android:id="@+id/ButtonLoopback"
