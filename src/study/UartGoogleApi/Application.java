@@ -75,7 +75,7 @@ public class Application extends android.app.Application {
 		}
 	}
 	
-	/* ttyUSB1 */DE
+	/* ttyUSB1 */
 	private SerialPort mSerialPortTtyUsb1 = null;
 	private String pathTtyUsb1 = "/dev/ttyUSB1";
 	private int baudrateTtyUsb1 = 38400;

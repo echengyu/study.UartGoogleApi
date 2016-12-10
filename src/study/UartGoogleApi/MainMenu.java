@@ -95,7 +95,7 @@ public class MainMenu extends Activity {
 		});
         
         
-//        startActivity(new Intent(MainMenu.this, ConsoleActivityList.class));
+        startActivity(new Intent(MainMenu.this, ConsoleActivityList.class));
     }
     
 	@Override

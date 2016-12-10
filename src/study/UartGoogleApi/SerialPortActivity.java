@@ -20,12 +20,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidParameterException;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.util.Log;
 import android_serialport_api.SerialPort;
 
 public abstract class SerialPortActivity extends Activity {
@@ -35,6 +37,10 @@ public abstract class SerialPortActivity extends Activity {
 	protected OutputStream mOutputStream;
 	private InputStream mInputStream;
 	private ReadThread mReadThread;
+	private byte[] buffer = new byte[16];
+	private int bufferIndex = 0;
+	
+	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
 
 	private class ReadThread extends Thread {
 
@@ -42,16 +48,34 @@ public abstract class SerialPortActivity extends Activity {
 		public void run() {
 			super.run();
 			while(!isInterrupted()) {
-				int size;
+				int size = 0;
 				try {
-					byte[] buffer = new byte[4096];
 					if (mInputStream == null) return;
-					size = mInputStream.read(buffer);
-					if (size > 0) {
-						onDataReceived(buffer, size);
+					
+					byte[] bufferStep0 = new byte[16];
+					size = mInputStream.read(bufferStep0);
+					if (size > 0){
+						Log.d("debug", "size: " + size);
+						byte[] bufferStep1 = new byte[size];
+						for (int i=0; i<size; i++){
+							bufferStep1[i] = bufferStep0[i];
+						}
+						for (int i=0; i<bufferStep1.length; i++){
+							if ( i + bufferIndex > buffer.length - 1){
+								bufferIndex = 0;
+							} else {
+								buffer[i + bufferIndex] = bufferStep1[i];
+							}
+						}
+						bufferIndex += bufferStep1.length;
+//						Log.d("debug", "buffer: " + byte2HexStr(buffer, buffer.length));
+						if (buffer.length > 0) {
+							onDataReceived(buffer, buffer.length);
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
+					Log.d("debug", "IOException: " + e);
 					return;
 				}
 			}
@@ -100,5 +124,15 @@ public abstract class SerialPortActivity extends Activity {
 		mApplication.closeSerialPort();
 		mSerialPort = null;
 		super.onDestroy();
+	}
+	
+	public static String byte2HexStr(byte[] b, int iLen) {
+		StringBuilder sb = new StringBuilder();
+		for (int n=0; n<iLen; n++) {
+			sb.append(mChars[(b[n] & 0xFF) >> 4]);
+			sb.append(mChars[b[n] & 0x0F]);
+			sb.append(' ');
+		}
+		return sb.toString().trim().toUpperCase(Locale.US);
 	}
 }
