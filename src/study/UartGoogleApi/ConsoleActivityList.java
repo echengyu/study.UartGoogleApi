@@ -19,7 +19,6 @@ public class ConsoleActivityList extends SerialPortActivity {
 	private EditText sendEditText;
 	private Button sendButton;
 	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
-	private long count = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +49,15 @@ public class ConsoleActivityList extends SerialPortActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		count = 0;
 		resdListAdapter.clear();
 	}
 
 	@Override
-	protected void onDataReceived(final byte[] buffer, final int size) {
+	protected void onDataReceived(final byte[] buffer, final int size, final long readCount, final long readTime) {
 		runOnUiThread(new Runnable() {
 			public void run() {
-				resdListAdapter.add("Count: " + count++ + " ,Data: " + byte2HexStr(buffer, size));
-				if (count >  2147483646){
-					count = 0;
+				resdListAdapter.add("Count: " + readCount + " ,Hz: " + (readTime * 10) + " ,Data: " + byte2HexStr(buffer, size));
+				if (readCount >  2147483646){
 					resdListAdapter.clear();
 				}
 			}

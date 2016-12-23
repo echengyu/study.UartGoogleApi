@@ -19,6 +19,7 @@ package study.UartGoogleApi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.CharBuffer;
 import java.security.InvalidParameterException;
 import java.util.Locale;
 
@@ -27,6 +28,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android_serialport_api.SerialPort;
 
@@ -37,10 +39,29 @@ public abstract class SerialPortActivity extends Activity {
 	protected OutputStream mOutputStream;
 	private InputStream mInputStream;
 	private ReadThread mReadThread;
+	private TimeMath mTimeMath;
 	private byte[] buffer = new byte[16];
 	private int bufferIndex = 0;
+	private long readCount = 0;
+	private long readTime = 0;
 	
 	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
+
+	private class TimeMath extends Thread {
+		
+		@Override
+	    public void run() {
+	    	while(!isInterrupted()) {		    	
+		    	long readTimeTmp = readCount;
+				try {
+				    Thread.sleep(100);
+				} catch(InterruptedException ex) {
+				    Thread.currentThread().interrupt();
+				}
+				readTime = readCount - readTimeTmp;
+	    	}
+	    }
+	};
 
 	private class ReadThread extends Thread {
 
@@ -51,11 +72,10 @@ public abstract class SerialPortActivity extends Activity {
 				int size = 0;
 				try {
 					if (mInputStream == null) return;
-					
 					byte[] bufferStep0 = new byte[16];
 					size = mInputStream.read(bufferStep0);
 					if (size > 0){
-						Log.d("debug", "size: " + size);
+//						Log.d("debug", "size: " + size);
 						byte[] bufferStep1 = new byte[size];
 						for (int i=0; i<size; i++){
 							bufferStep1[i] = bufferStep0[i];
@@ -68,10 +88,10 @@ public abstract class SerialPortActivity extends Activity {
 							}
 						}
 						bufferIndex += bufferStep1.length;
-//						Log.d("debug", "buffer: " + byte2HexStr(buffer, buffer.length));
 						if (buffer.length > 0) {
-							onDataReceived(buffer, buffer.length);
+							onDataReceived(buffer, buffer.length, readCount, readTime);
 						}
+						readCount++;
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -106,6 +126,10 @@ public abstract class SerialPortActivity extends Activity {
 			/* Create a receiving thread */
 			mReadThread = new ReadThread();
 			mReadThread.start();
+			
+			mTimeMath = new TimeMath();
+			mTimeMath.start();
+			
 		} catch (SecurityException e) {
 			DisplayError(R.string.error_security);
 		} catch (IOException e) {
@@ -115,7 +139,7 @@ public abstract class SerialPortActivity extends Activity {
 		}
 	}
 
-	protected abstract void onDataReceived(final byte[] buffer, final int size);
+	protected abstract void onDataReceived(final byte[] buffer, final int size, final long readCount, final long readTime);
 
 	@Override
 	protected void onDestroy() {
