@@ -29,6 +29,7 @@ public class SerialPortPreferences extends PreferenceActivity {
 	private Application mApplication;
 	private SerialPortFinder mSerialPortFinder;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

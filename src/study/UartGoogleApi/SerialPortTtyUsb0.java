@@ -22,15 +22,12 @@ import java.io.OutputStream;
 import java.security.InvalidParameterException;
 import java.util.Locale;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 import android_serialport_api.SerialPort;
 
 public class SerialPortTtyUsb0 {

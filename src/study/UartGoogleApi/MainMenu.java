@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class MainMenu extends Activity {
 	
@@ -46,7 +45,7 @@ public class MainMenu extends Activity {
         buttonSetup.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				startActivity(new Intent(MainMenu.this, SerialPortPreferences.class));
-				buttonTtyUsb0.setEnabled(true);
+//				buttonTtyUsb0.setEnabled(true);
 			}
 		});
         
@@ -57,6 +56,7 @@ public class MainMenu extends Activity {
 			}
 		});
         
+        /*
         buttonTtyUsb0 = (Button)findViewById(R.id.ButtonTtyUsb0);
         buttonTtyUsb0.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -86,6 +86,7 @@ public class MainMenu extends Activity {
 				}
 			}
 		});
+		*/
 
         final Button buttonLoopback = (Button)findViewById(R.id.ButtonLoopback);
         buttonLoopback.setOnClickListener(new View.OnClickListener() {
@@ -94,8 +95,9 @@ public class MainMenu extends Activity {
 			}
 		});
         
-        
+        /*
         startActivity(new Intent(MainMenu.this, ConsoleActivityList.class));
+        */
     }
     
 	@Override
