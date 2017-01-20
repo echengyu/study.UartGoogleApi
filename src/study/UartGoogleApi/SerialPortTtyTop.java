@@ -1,19 +1,3 @@
-/*
- * Copyright 2009 Cedric Priscal
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package study.UartGoogleApi;
 
 import java.io.IOException;
@@ -32,47 +16,50 @@ import android_serialport_api.SerialPort;
 
 public class SerialPortTtyTop {
 	private final static String TAG = "SerialPortTtyTop";
+	
+	protected Application mApplication;
+	protected SerialPort mSerialPort;
+	protected OutputStream mOutputStream;
+	private InputStream mInputStream;
+	private ReadThread mReadThread;
+	
+	private Handler mHandler;
+	private Context mContext;
+	private boolean isConnect = true;
+	
+	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
+	
+	public SerialPortTtyTop(Handler handler, Context context) {
+		this.mHandler = handler;
+		this.mContext = context;
+		
+		mApplication = (Application) mContext.getApplicationContext();
 
-
-//	ReadThread mReadThread = null;
-//	private static MainStaticRun signal = null;
-//	public static MainStaticRun Init(){
-//		if(signal == null){
-//			signal = new MainStaticRun();
-//		}
-//		return signal;
-//
-//
-//	}
-
-	protected static Application mApplication;
-	protected static SerialPort mSerialPort;
-	protected static OutputStream mOutputStream;
-	private static InputStream mInputStream;
-	private static ReadThread mReadThread;
-	private static boolean isConnect = true;
-
-	private static SerialPortTtyTop mSerialPortTtyTop;
-	private SerialPortTtyTop() {};
-
-
-	public static SerialPortTtyTop Init() {
-		if(mSerialPortTtyTop == null) {
-			mSerialPortTtyTop = new SerialPortTtyTop();
-		}
-		return mSerialPortTtyTop;
+		Log.d("debug", "FtdiUartConnect is Setup");
 	}
+	
+	public SerialPortTtyTop(Context context) {
+		this.mContext = context;
+		
+		mApplication = (Application) mContext.getApplicationContext();
 
-	public static void openDevice() {
+		Log.d("debug", "FtdiUartConnect is Setup");
+	}
+	
+	public SerialPortTtyTop() {
+
+	}
+	
+	public void openDevice() {
 		try {
 			mSerialPort = mApplication.getSerialPortTtyTop();
 			mOutputStream = mSerialPort.getOutputStream();
 			mInputStream = mSerialPort.getInputStream();
 
 			/* Create a receiving thread */
-			mReadThread = ReadThread.Init();
+			mReadThread = new ReadThread();
 			mReadThread.start();
-
+			
 			Log.d(TAG, "Open to " + mSerialPort.getDevice());
 		} catch (SecurityException e) {
 			isConnect = false;
@@ -86,100 +73,43 @@ public class SerialPortTtyTop {
 		}
 	}
 
-	public static void stopDevice() {
+	public void stopDevice() {
 		if (mReadThread != null)
 			mReadThread.interrupt();
 		mApplication.closeSerialPortTtyTop();
 		mSerialPort = null;
 	}
+	
+	public boolean isConnect() {
+		return this.isConnect;
+	}
 
-
-
-
-
-//	private Handler mHandler;
-//	private Context mContext;
-//	private boolean isConnect = true;
-//
-//
-//
-//	public SerialPortTtyTop(Handler handler, Context context) {
-//		this.mHandler = handler;
-//		this.mContext = context;
-//
-//		mApplication = (Application) mContext.getApplicationContext();
-//
-//		Log.d("debug", "FtdiUartConnect is Setup");
-//	}
-//
-//	public void openDevice() {
-//		try {
-//			mSerialPort = mApplication.getSerialPortTtyTop();
-//			mOutputStream = mSerialPort.getOutputStream();
-//			mInputStream = mSerialPort.getInputStream();
-//
-//			/* Create a receiving thread */
-//			mReadThread = new ReadThread();
-//			mReadThread.start();
-//
-//			Log.d(TAG, "Open to " + mSerialPort.getDevice());
-//		} catch (SecurityException e) {
-//			isConnect = false;
-//			DisplayError(R.string.error_security);
-//		} catch (IOException e) {
-//			isConnect = false;
-//			DisplayError(R.string.error_unknown);
-//		} catch (InvalidParameterException e) {
-//			isConnect = false;
-//			DisplayError(R.string.error_configuration);
-//		}
-//	}
-//
-//	public void stopDevice() {
-//		if (mReadThread != null)
-//			mReadThread.interrupt();
-//		mApplication.closeSerialPortTtyTop();
-//		mSerialPort = null;
-//	}
-//
-//	public boolean isConnect() {
-//		return this.isConnect;
-//	}
-//
-//	public void sendString(String msg) {
-//		if (isConnect) {
-//			CharSequence t = msg;
-//			char[] text = new char[t.length()];
-//			for (int i=0; i<t.length(); i++) {
-//				text[i] = t.charAt(i);
-//			}
-//			try {
-//				mOutputStream.write(new String(text).getBytes());
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
-//
-//	public void sendByte(byte[] b) {
-//		if (isConnect){
-//			try {
-//				mOutputStream.write(b);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
-//
-	private static class ReadThread extends Thread {
-		
-		private static ReadThread mstaticReadThread;
-		private ReadThread() {};
-		public static ReadThread Init() {
-			if(mstaticReadThread == null)
-				mstaticReadThread = new ReadThread();
-			return mstaticReadThread;
+	public void sendString(String msg) {
+		if (isConnect) {
+			CharSequence t = msg;
+			char[] text = new char[t.length()];
+			for (int i=0; i<t.length(); i++) {
+				text[i] = t.charAt(i);
+			}
+			try {
+				mOutputStream.write(new String(text).getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+	}
+	
+	public void sendByte(byte[] b) {
+		if (isConnect){
+			try {
+				mOutputStream.write(b);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private class ReadThread extends Thread {
 
 		@Override
 		public void run() {
@@ -201,7 +131,7 @@ public class SerialPortTtyTop {
 		}
 	}
 
-	private static void DisplayError(int resourceId) {
+	private void DisplayError(int resourceId) {
 //		AlertDialog.Builder b = new AlertDialog.Builder(mContext);
 //		b.setTitle("Error");
 //		b.setMessage(resourceId);
@@ -212,8 +142,7 @@ public class SerialPortTtyTop {
 //		});
 //		b.show();
 	}
-
-	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
+	
 	public static String byte2HexStr(byte[] b, int iLen) {
 		StringBuilder sb = new StringBuilder();
 		for (int n=0; n<iLen; n++) {
