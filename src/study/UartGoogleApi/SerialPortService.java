@@ -1,16 +1,12 @@
 package study.UartGoogleApi;
 
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.WindowManager;
 
 public class SerialPortService extends Service {
 	
@@ -20,10 +16,9 @@ public class SerialPortService extends Service {
 	public static final String SERVICE_UART_READ_BYTE	= "READ_BYTE";
 	public static final String SERVICE_UART_SEND_STRING	= "SEND_STRING";
 	public static final String SERVICE_UART_SEND_BYTE	= "SEND_BYTE";
-
-	private SerialPortTtyTop 	mSerialPortTtyTop 	= null;
-	private IntentFilter 		mIntentFilter 		= null;
-	private BroadcastReceiver 	mBroadcastReceiver 	= null;
+	private SerialPortTtyTop 	mSerialPortTtyTop 		= null;
+	private IntentFilter 		mIntentFilter 			= null;
+	private BroadcastReceiver 	mBroadcastReceiver 		= null;
 
 	@Override
 	public void onCreate() {

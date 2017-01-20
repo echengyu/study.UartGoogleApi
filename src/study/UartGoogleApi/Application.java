@@ -96,11 +96,9 @@ public class Application extends android.app.Application {
 	
 	/* ttyTop */
 	private SerialPort mSerialPortTtyTop = null;
-	
 	public SerialPort getSerialPortTtyTop() throws SecurityException, IOException, InvalidParameterException {
-		if (mSerialPortTtyTop == null) {
-			mSerialPortTtyTop = new SerialPort(new File(SerialPortTtyTop.pathTtyTop), SerialPortTtyTop.baudrateTtyTop, 0);
-		} 
+		if (mSerialPortTtyTop == null)
+			mSerialPortTtyTop = new SerialPort(new File(SerialPortTtyTop.PATH), SerialPortTtyTop.BAUDRATE, 0);
 		return mSerialPortTtyTop;
 	}
 	

@@ -7,21 +7,18 @@ import java.security.InvalidParameterException;
 import java.util.Locale;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 import android_serialport_api.SerialPort;
 
 public class SerialPortTtyTop {
 	private final static String TAG 			= "SerialPortTtyTop";
-	public final static String 	pathTtyTop 		= "/dev/ttyUSB5";
-	public final static int 	baudrateTtyTop 	= 38400;	
+	public final static String 	PATH 			= "/dev/ttyUSB0";
+	public final static int 	BAUDRATE 		= 38400;	
 	protected Application 		mApplication	= null;
 	protected SerialPort 		mSerialPort		= null;
 	protected OutputStream 		mOutputStream	= null;
@@ -33,7 +30,7 @@ public class SerialPortTtyTop {
 	public SerialPortTtyTop(Context context) {
 		this.mContext = context;
 		mApplication = (Application) mContext.getApplicationContext();
-		Log.d("debug", "FtdiUartConnect is Setup");
+		Log.d(TAG, TAG + " Setup");
 	}
 	
 	public void openDevice() {
@@ -63,7 +60,10 @@ public class SerialPortTtyTop {
 		if (mReadThread != null)
 			mReadThread.interrupt();
 		mApplication.closeSerialPortTtyTop();
-		mSerialPort = null;
+		if (mSerialPort != null) {
+			mSerialPort = null;
+			Log.d(TAG, "Close to " + mSerialPort.getDevice());
+		}
 	}
 	
 	public boolean isConnect() {
@@ -125,7 +125,7 @@ public class SerialPortTtyTop {
 
 	private void DisplayError(int resourceId) {
 		AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
-		mBuilder.setTitle("Error");
+		mBuilder.setTitle("Error!\tPath: " + PATH);
 		mBuilder.setMessage(resourceId);
 		mBuilder.setPositiveButton("OK", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
