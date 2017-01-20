@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android_serialport_api.SerialPort;
@@ -122,6 +123,11 @@ public class SerialPortTtyTop {
 					size = mInputStream.read(buffer);
 					if (size > 0) {
 						Log.d("debug", "SerialPortTtyTop: " + byte2HexStr(buffer, size));
+						
+						Intent intent=new Intent();
+					    intent.putExtra("UART_READ", byte2HexStr(buffer, size));
+					    intent.setAction("study.UartGoogleApi.SerialPortService");
+					    mContext.sendBroadcast(intent);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

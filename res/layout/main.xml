@@ -19,14 +19,14 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="ConsoleList" /> 
-        
+        android:text="ConsoleList" />
+
     <Button
-        android:id="@+id/ButtonServiceSetSatus"
+        android:id="@+id/ButtonLoopback"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="@string/service_start" />  
+        android:text="Loopback" />  
         
     <Button
         android:id="@+id/ButtonServiceActivity0"
@@ -43,10 +43,10 @@
         android:text="@string/service_activity_1" />
 
     <Button
-        android:id="@+id/ButtonLoopback"
+        android:id="@+id/ButtonServiceSetSatus"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Loopback" />
+        android:text="@string/service_start" />
 
 </LinearLayout>

@@ -3,7 +3,13 @@ package study.UartGoogleApi;
 import java.io.IOException;
 import java.util.Locale;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -12,7 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class SerialPortServiceActivityList0 extends SerialPortActivity {
+public class SerialPortServiceActivityList0 extends Activity {
 
 	private ListView readListView;
 	private ArrayAdapter<String> resdListAdapter;
@@ -20,10 +26,18 @@ public class SerialPortServiceActivityList0 extends SerialPortActivity {
 	private Button sendButton;
 	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
 
+	private Receiver mReceiver = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.console_list);
+
+		startService(new Intent(SerialPortServiceActivityList0.this, SerialPortService.class));
+		mReceiver = new Receiver();
+		IntentFilter filter=new IntentFilter();
+		filter.addAction("study.UartGoogleApi.SerialPortService");
+		SerialPortServiceActivityList0.this.registerReceiver(mReceiver, filter);
 
 		readListView = (ListView)findViewById(R.id.readListView);
 		sendEditText = (EditText)findViewById(R.id.sendEditText);
@@ -52,34 +66,22 @@ public class SerialPortServiceActivityList0 extends SerialPortActivity {
 		resdListAdapter.clear();
 	}
 
-	@Override
-	protected void onDataReceived(final byte[] buffer, final int size, final long readCount, final long readTime) {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				resdListAdapter.add("Count: " + readCount + " ,Hz: " + (readTime * 10) + " ,Data: " + byte2HexStr(buffer, size));
-				if (readCount >  2147483646){
-					resdListAdapter.clear();
-				}
-			}
-		});
-	}
-
 	public void sendButtonOnClick(View view) {
 		sendString(sendEditText.getText() + "");
 	}
 
 	public void sendString(String msg) {
-		CharSequence t = msg;
-		char[] text = new char[t.length()];
-		for (int i=0; i<t.length(); i++) {
-			text[i] = t.charAt(i);
-		}
-		try {
-			mOutputStream.write(new String(text).getBytes());
-			mOutputStream.write('\n');
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		CharSequence t = msg;
+//		char[] text = new char[t.length()];
+//		for (int i=0; i<t.length(); i++) {
+//			text[i] = t.charAt(i);
+//		}
+//		try {
+//			mOutputStream.write(new String(text).getBytes());
+//			mOutputStream.write('\n');
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public static String byte2HexStr(byte[] b, int iLen) {
@@ -90,6 +92,14 @@ public class SerialPortServiceActivityList0 extends SerialPortActivity {
 			sb.append(' ');
 		}
 		return sb.toString().trim().toUpperCase(Locale.US);
+	}
+
+	public class Receiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Bundle bundle= intent.getExtras();
+			Log.d("debug", "Read: " + bundle.getString("UART_READ"));
+		}
 	}
 }
 

@@ -64,38 +64,32 @@ public class MainMenu extends Activity {
 			}
 		});
         
-        /*
-        buttonTtyUsb0 = (Button)findViewById(R.id.ButtonTtyUsb0);
-        buttonTtyUsb0.setOnClickListener(new View.OnClickListener() {
+        final Button buttonLoopback = (Button)findViewById(R.id.ButtonLoopback);
+        buttonLoopback.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				if (buttonTtyUsb0Enabled){
-					buttonTtyUsb0Enabled = false;
-					mSerialPortTtyUsb0 = new SerialPortTtyUsb0(mHandler, MainMenu.this);
-					mSerialPortTtyUsb0.openDevice();
-				} else {
-					buttonTtyUsb0Enabled = true;
-					if (mSerialPortTtyUsb0 != null)
-						mSerialPortTtyUsb0.stopDevice();
-				}
+				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList1.class));
 			}
 		});
         
-        buttonTtyUsb1 = (Button)findViewById(R.id.ButtonTtyUsb1);
-        buttonTtyUsb1.setOnClickListener(new View.OnClickListener() {
+        ButtonServiceActivity0 = (Button)findViewById(R.id.ButtonServiceActivity0);
+        ButtonServiceActivity0.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				if (buttonTtyUsb1Enabled){
-					buttonTtyUsb1Enabled = false;
-					mSerialPortTtyUsb1 = new SerialPortTtyUsb1(mHandler, MainMenu.this);
-					mSerialPortTtyUsb1.openDevice();
-				} else {
-					buttonTtyUsb1Enabled = true;
-					if (mSerialPortTtyUsb1 != null)
-						mSerialPortTtyUsb1.stopDevice();
-				}
+				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList0.class));
 			}
 		});
-		*/
         
+        ButtonServiceActivity1 = (Button)findViewById(R.id.ButtonServiceActivity1);
+        ButtonServiceActivity1.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+//				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList1.class));
+				Intent mIntent = new Intent();
+				mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
+				mIntent.putExtra(SerialPortService.SERVICE_UART_SEND_STRING, "Pass!" + "\n");
+				mIntent.putExtra(SerialPortService.SERVICE_UART_SEND_BYTE, new byte[]{0x4F, 0x6B, 0x21, 0x0A});
+			    sendBroadcast(mIntent);
+			}
+		});
+
         ButtonServiceSetSatus = (Button)findViewById(R.id.ButtonServiceSetSatus);
         ButtonServiceSetSatus.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -108,28 +102,6 @@ public class MainMenu extends Activity {
 					stopService(new Intent(MainMenu.this, SerialPortService.class));
 					ButtonServiceSetSatus.getBackground().clearColorFilter();
 				}
-			}
-		});
-
-        ButtonServiceActivity0 = (Button)findViewById(R.id.ButtonServiceActivity0);
-        ButtonServiceActivity0.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList0.class));
-			}
-		});
-        
-        ButtonServiceActivity1 = (Button)findViewById(R.id.ButtonServiceActivity1);
-        ButtonServiceActivity1.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList1.class));
-			}
-		});
-
-
-        final Button buttonLoopback = (Button)findViewById(R.id.ButtonLoopback);
-        buttonLoopback.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList1.class));
 			}
 		});
     }
