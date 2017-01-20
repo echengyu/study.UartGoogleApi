@@ -37,7 +37,9 @@ public class MainMenu extends Activity {
 	
 	
 	
-	private Button ButtonServiceSetSatus = null;
+	private Button ButtonServiceSetSatus 	= null;
+	private Button ButtonServiceActivity0 	= null;
+	private Button ButtonServiceActivity1 	= null;
 	private boolean setServiceRun = false;
 	
 
@@ -108,18 +110,28 @@ public class MainMenu extends Activity {
 				}
 			}
 		});
-		
+
+        ButtonServiceActivity0 = (Button)findViewById(R.id.ButtonServiceActivity0);
+        ButtonServiceActivity0.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList0.class));
+			}
+		});
+        
+        ButtonServiceActivity1 = (Button)findViewById(R.id.ButtonServiceActivity1);
+        ButtonServiceActivity1.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList1.class));
+			}
+		});
+
 
         final Button buttonLoopback = (Button)findViewById(R.id.ButtonLoopback);
         buttonLoopback.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				startActivity(new Intent(MainMenu.this, LoopbackActivity.class));
+				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList1.class));
 			}
 		});
-        
-        /*
-        startActivity(new Intent(MainMenu.this, ConsoleActivityList.class));
-        */
     }
     
 	@Override

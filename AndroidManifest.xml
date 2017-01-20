@@ -35,6 +35,14 @@
             android:name="LoopbackActivity" />
         
         <service android:name="study.UartGoogleApi.SerialPortService" />  
+        <activity
+            android:label="@string/service_activity_0"
+            android:name="study.UartGoogleApi.SerialPortServiceActivityList0" 
+            android:windowSoftInputMode="stateHidden" />
+        <activity 
+            android:label="@string/service_activity_1"
+            android:name="study.UartGoogleApi.SerialPortServiceActivityList1" 
+            android:windowSoftInputMode="stateHidden" />
         
     </application>
 
