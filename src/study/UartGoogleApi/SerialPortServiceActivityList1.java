@@ -1,5 +1,7 @@
 package study.UartGoogleApi;
 
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,7 +29,7 @@ public class SerialPortServiceActivityList1 extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.service_activity_list0);
+		setContentView(R.layout.service_activity_list1);
 
 		readListView = (ListView)findViewById(R.id.readListView);
 		sendEditText = (EditText)findViewById(R.id.sendEditText);
@@ -56,8 +58,10 @@ public class SerialPortServiceActivityList1 extends Activity {
 				public void onReceive(Context context, Intent intent) {
 					String readString = intent.getExtras().getString(SerialPortService.SERVICE_UART_READ_STRING, null);
 					byte[] readdByte = intent.getExtras().getByteArray(SerialPortService.SERVICE_UART_READ_BYTE);
-					if (readString != null)
-						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + readString);
+//					if (readString != null)
+//						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + readString);
+					if (readdByte != null)
+						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + byte2HexStr(readdByte, readdByte.length));
 					if (bufferIndex > 2147483646)
 						bufferIndex = 0;
 				}
@@ -99,5 +103,16 @@ public class SerialPortServiceActivityList1 extends Activity {
 		mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
 		mIntent.putExtra(SerialPortService.SERVICE_UART_SEND_BYTE, sendByte);
 	    sendBroadcast(mIntent);
+	}
+	
+	private String byte2HexStr(byte[] b, int iLen) {
+		char[] mChars = "0123456789ABCDEF".toCharArray();
+		StringBuilder sb = new StringBuilder();
+		for (int n=0; n<iLen; n++) {
+			sb.append(mChars[(b[n] & 0xFF) >> 4]);
+			sb.append(mChars[b[n] & 0x0F]);
+			sb.append(' ');
+		}
+		return sb.toString().trim().toUpperCase(Locale.US);
 	}
 }

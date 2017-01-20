@@ -61,8 +61,8 @@ public class SerialPortTtyTop {
 			mReadThread.interrupt();
 		mApplication.closeSerialPortTtyTop();
 		if (mSerialPort != null) {
-			mSerialPort = null;
 			Log.d(TAG, "Close to " + mSerialPort.getDevice());
+			mSerialPort = null;
 		}
 	}
 	
@@ -103,17 +103,24 @@ public class SerialPortTtyTop {
 			while(!isInterrupted()) {
 				int size;
 				try {
-					byte[] buffer = new byte[4096];
+					byte[] buffer = new byte[16];
 					if (mInputStream == null) return;
 					size = mInputStream.read(buffer);
 					if (size > 0) {
-						Log.d("debug", "SerialPortTtyTop: " + byte2HexStr(buffer, size));
+//						Log.d("debug", "SerialPortTtyTop: " + byte2HexStr(buffer, size));
 						
 						Intent mIntent = new Intent();
 						mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
 						mIntent.putExtra(SerialPortService.SERVICE_UART_READ_STRING, hexStr2Str(byte2HexStr(buffer, size)));
 						mIntent.putExtra(SerialPortService.SERVICE_UART_READ_BYTE, buffer);
 						mApplication.sendBroadcast(mIntent);
+						
+						if ((hexStr2Str(byte2HexStr(buffer, size)).equals("open"))) {
+							Intent launchIntent = mContext.getPackageManager().getLaunchIntentForPackage("study.UartGoogleApi");
+							if (launchIntent != null) { 
+								mContext.startActivity(launchIntent);
+							}
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
