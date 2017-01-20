@@ -47,7 +47,7 @@ public class MainMenu extends Activity {
         final Button ButtonServiceActivity1 = (Button)findViewById(R.id.ButtonServiceActivity1);
         ButtonServiceActivity1.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-//				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList1.class));
+				startActivity(new Intent(MainMenu.this, SerialPortServiceActivityList1.class));
 			}
 		});
 

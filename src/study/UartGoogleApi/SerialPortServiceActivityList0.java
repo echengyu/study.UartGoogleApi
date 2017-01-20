@@ -16,11 +16,13 @@ import android.widget.ListView;
 
 public class SerialPortServiceActivityList0 extends Activity {
 
+	private IntentFilter 		mIntentFilter 		= null;
+	private BroadcastReceiver 	mBroadcastReceiver 	= null;
+	
 	private ListView readListView;
 	private ArrayAdapter<String> resdListAdapter;
 	private EditText sendEditText;
-	private IntentFilter mIntentFilter = null;
-	private BroadcastReceiver mBroadcastReceiver = null;
+	private int bufferIndex = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,9 @@ public class SerialPortServiceActivityList0 extends Activity {
 					String readString = intent.getExtras().getString(SerialPortService.SERVICE_UART_READ_STRING, null);
 					byte[] readdByte = intent.getExtras().getByteArray(SerialPortService.SERVICE_UART_READ_BYTE);
 					if (readString != null)
-						resdListAdapter.add(readString);
+						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + readString);
+					if (bufferIndex > 2147483646)
+						bufferIndex = 0;
 				}
 			};
 			registerReceiver(mBroadcastReceiver, mIntentFilter);
@@ -81,7 +85,7 @@ public class SerialPortServiceActivityList0 extends Activity {
 		}
 	}
 	
-	// UART Read String BroadcastReceiver
+	// UART Send String BroadcastReceiver
 	private void sendString(String sendString) {
 		Intent mIntent = new Intent();
 		mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
@@ -89,7 +93,7 @@ public class SerialPortServiceActivityList0 extends Activity {
 	    sendBroadcast(mIntent);
 	}
 	
-	// UART Read Byte BroadcastReceiver
+	// UART Send Byte BroadcastReceiver
 	private void sendByte(byte[] sendByte) {
 		Intent mIntent = new Intent();
 		mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
@@ -97,5 +101,3 @@ public class SerialPortServiceActivityList0 extends Activity {
 	    sendBroadcast(mIntent);
 	}
 }
-
-

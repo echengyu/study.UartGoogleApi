@@ -1,8 +1,10 @@
 package study.UartGoogleApi;
 
-import java.io.IOException;
-import java.util.Locale;
-
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -12,22 +14,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class SerialPortServiceActivityList1 extends SerialPortActivity {
+public class SerialPortServiceActivityList1 extends Activity {
 
+	private IntentFilter 		mIntentFilter 		= null;
+	private BroadcastReceiver 	mBroadcastReceiver 	= null;
+	
 	private ListView readListView;
 	private ArrayAdapter<String> resdListAdapter;
 	private EditText sendEditText;
-	private Button sendButton;
-	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
+	private int bufferIndex = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.console_list);
+		setContentView(R.layout.service_activity_list0);
 
 		readListView = (ListView)findViewById(R.id.readListView);
 		sendEditText = (EditText)findViewById(R.id.sendEditText);
-		sendButton = (Button)findViewById(R.id.sendButton);
 
 		resdListAdapter = new ArrayAdapter<String>(this, R.layout.message);
 		readListView.setAdapter(resdListAdapter);
@@ -38,10 +41,34 @@ public class SerialPortServiceActivityList1 extends SerialPortActivity {
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 				(keyCode == KeyEvent.KEYCODE_ENTER)) {
 					// Perform action on key press
-					sendString(sendEditText.getText() + "");
+				    sendString(sendEditText.getText() + "");
 					return true;
 				}
 				return false;
+			}
+		});
+		
+		// UART Read BroadcastReceiver
+		if (mIntentFilter == null && mBroadcastReceiver == null) {
+			mIntentFilter = new IntentFilter(SerialPortService.SERVICE_UART_BROADCAST);
+			mBroadcastReceiver = new BroadcastReceiver() {
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					String readString = intent.getExtras().getString(SerialPortService.SERVICE_UART_READ_STRING, null);
+					byte[] readdByte = intent.getExtras().getByteArray(SerialPortService.SERVICE_UART_READ_BYTE);
+					if (readString != null)
+						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + readString);
+					if (bufferIndex > 2147483646)
+						bufferIndex = 0;
+				}
+			};
+			registerReceiver(mBroadcastReceiver, mIntentFilter);
+		}
+		
+		final Button sendButton = (Button)findViewById(R.id.sendButton);
+		sendButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				sendString(sendEditText.getText() + "");
 			}
 		});
 	}
@@ -50,47 +77,27 @@ public class SerialPortServiceActivityList1 extends SerialPortActivity {
 	public void onDestroy() {
 		super.onDestroy();
 		resdListAdapter.clear();
-	}
-
-	@Override
-	protected void onDataReceived(final byte[] buffer, final int size, final long readCount, final long readTime) {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				resdListAdapter.add("Count: " + readCount + " ,Hz: " + (readTime * 10) + " ,Data: " + byte2HexStr(buffer, size));
-				if (readCount >  2147483646){
-					resdListAdapter.clear();
-				}
-			}
-		});
-	}
-
-	public void sendButtonOnClick(View view) {
-		sendString(sendEditText.getText() + "");
-	}
-
-	public void sendString(String msg) {
-		CharSequence t = msg;
-		char[] text = new char[t.length()];
-		for (int i=0; i<t.length(); i++) {
-			text[i] = t.charAt(i);
-		}
-		try {
-			mOutputStream.write(new String(text).getBytes());
-			mOutputStream.write('\n');
-		} catch (IOException e) {
-			e.printStackTrace();
+		
+		if (mIntentFilter != null | mBroadcastReceiver != null) {
+			unregisterReceiver(mBroadcastReceiver);
+			mIntentFilter = null;
+			mBroadcastReceiver = null;
 		}
 	}
-
-	public static String byte2HexStr(byte[] b, int iLen) {
-		StringBuilder sb = new StringBuilder();
-		for (int n=0; n<iLen; n++) {
-			sb.append(mChars[(b[n] & 0xFF) >> 4]);
-			sb.append(mChars[b[n] & 0x0F]);
-			sb.append(' ');
-		}
-		return sb.toString().trim().toUpperCase(Locale.US);
+	
+	// UART Send String BroadcastReceiver
+	private void sendString(String sendString) {
+		Intent mIntent = new Intent();
+		mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
+		mIntent.putExtra(SerialPortService.SERVICE_UART_SEND_STRING, sendString + "");
+	    sendBroadcast(mIntent);
+	}
+	
+	// UART Send Byte BroadcastReceiver
+	private void sendByte(byte[] sendByte) {
+		Intent mIntent = new Intent();
+		mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
+		mIntent.putExtra(SerialPortService.SERVICE_UART_SEND_BYTE, sendByte);
+	    sendBroadcast(mIntent);
 	}
 }
-
-
