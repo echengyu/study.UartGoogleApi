@@ -16,8 +16,10 @@
 
 package study.UartGoogleApi;
 
+import android.R.color;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -33,6 +35,10 @@ public class MainMenu extends Activity {
 	private boolean buttonTtyUsb0Enabled = true;
 	private boolean buttonTtyUsb1Enabled = true;
 	
+	
+	
+	private Button ButtonServiceSetSatus = null;
+	private boolean setServiceRun = false;
 	
 
     /** Called when the activity is first created. */
@@ -87,6 +93,22 @@ public class MainMenu extends Activity {
 			}
 		});
 		*/
+        
+        ButtonServiceSetSatus = (Button)findViewById(R.id.ButtonServiceSetSatus);
+        ButtonServiceSetSatus.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				setServiceRun = !setServiceRun;
+				if (setServiceRun){
+		            startService(new Intent(MainMenu.this, SerialPortService.class));
+		            ButtonServiceSetSatus.getBackground().setColorFilter(0xFF994C00, android.graphics.PorterDuff.Mode.MULTIPLY);
+		            
+				} else {
+					stopService(new Intent(MainMenu.this, SerialPortService.class));
+					ButtonServiceSetSatus.getBackground().clearColorFilter();
+				}
+			}
+		});
+		
 
         final Button buttonLoopback = (Button)findViewById(R.id.ButtonLoopback);
         buttonLoopback.setOnClickListener(new View.OnClickListener() {

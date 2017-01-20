@@ -34,6 +34,8 @@
         <activity 
             android:name="LoopbackActivity" />
         
+        <service android:name="study.UartGoogleApi.SerialPortService" />  
+        
     </application>
 
     <uses-sdk android:minSdkVersion="15" />
