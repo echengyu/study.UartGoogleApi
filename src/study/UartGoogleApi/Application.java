@@ -93,4 +93,23 @@ public class Application extends android.app.Application {
 			mSerialPortTtyUsb1 = null;
 		}
 	}
+	
+	/* ttyTop */
+	private SerialPort mSerialPortTtyTop = null;
+	private String pathTtyTop = "/dev/ttyUSB1";
+	private int baudrateTtyTop = 38400;
+	
+	public SerialPort getSerialPortTtyTop() throws SecurityException, IOException, InvalidParameterException {
+		if (mSerialPortTtyTop == null) {
+			mSerialPortTtyTop = new SerialPort(new File(pathTtyTop), baudrateTtyTop, 0);
+		} 
+		return mSerialPortTtyTop;
+	}
+	
+	public void closeSerialPortTtyTop() {
+		if (mSerialPortTtyTop != null) {
+			mSerialPortTtyTop.close();
+			mSerialPortTtyTop = null;
+		}
+	}
 }

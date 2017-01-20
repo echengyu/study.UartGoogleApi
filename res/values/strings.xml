@@ -2,8 +2,10 @@
 <resources>
     <string name="app_name">study.UartGoogleApi</string>
     <string name="error_configuration">Please configure your serial port first.</string>
-    <string name="error_security">You do not have read/write permission to the serial
-		port.</string>
-    <string name="error_unknown">The serial port can not be opened for an unknown
-		reason.</string>
+    <string name="error_security">You do not have read/write permission to the serial port.</string>
+    <string name="error_unknown">The serial port can not be opened for an unknown reason.</string>
+    <string name="service_start">Service Start</string>
+    <string name="service_stop">Service Stop</string>
+    <string name="service_activity_0">Service Activity 0</string>
+    <string name="service_activity_1">Service Activity 1</string>
 </resources>

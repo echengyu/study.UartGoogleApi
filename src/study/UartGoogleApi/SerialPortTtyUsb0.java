@@ -31,7 +31,8 @@ import android.util.Log;
 import android_serialport_api.SerialPort;
 
 public class SerialPortTtyUsb0 {
-
+	private final static String TAG = "SerialPortTtyUsb0";
+	
 	protected Application mApplication;
 	protected SerialPort mSerialPort;
 	protected OutputStream mOutputStream;
@@ -40,6 +41,7 @@ public class SerialPortTtyUsb0 {
 	
 	private Handler mHandler;
 	private Context mContext;
+	private boolean isConnect = true;
 	
 	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
 	
@@ -61,11 +63,16 @@ public class SerialPortTtyUsb0 {
 			/* Create a receiving thread */
 			mReadThread = new ReadThread();
 			mReadThread.start();
+			
+			Log.d(TAG, "Open to " + mSerialPort.getDevice());
 		} catch (SecurityException e) {
+			isConnect = false;
 			DisplayError(R.string.error_security);
 		} catch (IOException e) {
+			isConnect = false;
 			DisplayError(R.string.error_unknown);
 		} catch (InvalidParameterException e) {
+			isConnect = false;
 			DisplayError(R.string.error_configuration);
 		}
 	}
@@ -75,6 +82,35 @@ public class SerialPortTtyUsb0 {
 			mReadThread.interrupt();
 		mApplication.closeSerialPortTtyUsb0();
 		mSerialPort = null;
+	}
+	
+	public boolean isConnect() {
+		return this.isConnect;
+	}
+
+	public void sendString(String msg) {
+		if (isConnect) {
+			CharSequence t = msg;
+			char[] text = new char[t.length()];
+			for (int i=0; i<t.length(); i++) {
+				text[i] = t.charAt(i);
+			}
+			try {
+				mOutputStream.write(new String(text).getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void sendByte(byte[] b) {
+		if (isConnect){
+			try {
+				mOutputStream.write(b);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private class ReadThread extends Thread {

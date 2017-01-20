@@ -36,8 +36,14 @@ public class SerialPort {
 	private FileDescriptor mFd;
 	private FileInputStream mFileInputStream;
 	private FileOutputStream mFileOutputStream;
+	private File mDevice;
+	private int mBaudrate;
+	private int mFlags;
 
 	public SerialPort(File device, int baudrate, int flags) throws SecurityException, IOException {
+		this.mDevice = device;
+		this.mBaudrate = baudrate;
+		this.mFlags = flags;
 
 		/* Check access permission */
 		if (!device.canRead() || !device.canWrite()) {
@@ -74,6 +80,18 @@ public class SerialPort {
 
 	public OutputStream getOutputStream() {
 		return mFileOutputStream;
+	}
+	
+	public File getDevice(){
+		return mDevice;
+	}
+	
+	public int getBaudrate(){
+		return mBaudrate;
+	}
+	
+	public int getFlags(){
+		return mFlags;
 	}
 
 	// JNI
