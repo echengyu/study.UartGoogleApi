@@ -3,6 +3,11 @@
     package="study.UartGoogleApi"
     android:versionCode="3"
     android:versionName="1.2" >
+    
+    <uses-sdk android:minSdkVersion="15" />
+    
+    <!-- 系統的提示框權限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:icon="@drawable/icon"
@@ -34,18 +39,20 @@
         <activity 
             android:name="LoopbackActivity" />
         
-        <service android:name="study.UartGoogleApi.SerialPortService" />  
+        <!-- Serial Port Service -->
+        <service android:name="study.UartGoogleApi.SerialPortService" /> 
+        
+        <!-- Serial Port Activity Test0 -->
         <activity
             android:label="@string/service_activity_0"
             android:name="study.UartGoogleApi.SerialPortServiceActivityList0" 
             android:windowSoftInputMode="stateHidden" />
+        
+        <!-- Serial Port Activity Test1 -->
         <activity 
             android:label="@string/service_activity_1"
             android:name="study.UartGoogleApi.SerialPortServiceActivityList1" 
             android:windowSoftInputMode="stateHidden" />
         
     </application>
-
-    <uses-sdk android:minSdkVersion="15" />
-
 </manifest>

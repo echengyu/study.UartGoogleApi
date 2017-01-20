@@ -96,12 +96,10 @@ public class Application extends android.app.Application {
 	
 	/* ttyTop */
 	private SerialPort mSerialPortTtyTop = null;
-	private String pathTtyTop = "/dev/ttyUSB0";
-	private int baudrateTtyTop = 38400;
 	
 	public SerialPort getSerialPortTtyTop() throws SecurityException, IOException, InvalidParameterException {
 		if (mSerialPortTtyTop == null) {
-			mSerialPortTtyTop = new SerialPort(new File(pathTtyTop), baudrateTtyTop, 0);
+			mSerialPortTtyTop = new SerialPort(new File(SerialPortTtyTop.pathTtyTop), SerialPortTtyTop.baudrateTtyTop, 0);
 		} 
 		return mSerialPortTtyTop;
 	}

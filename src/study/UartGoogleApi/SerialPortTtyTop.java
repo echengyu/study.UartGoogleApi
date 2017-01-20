@@ -6,31 +6,33 @@ import java.io.OutputStream;
 import java.security.InvalidParameterException;
 import java.util.Locale;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Toast;
 import android_serialport_api.SerialPort;
 
 public class SerialPortTtyTop {
-	private final static String TAG = "SerialPortTtyTop";
-	
-	protected Application mApplication;
-	protected SerialPort mSerialPort;
-	protected OutputStream mOutputStream;
-	private InputStream mInputStream;
-	private ReadThread mReadThread;
-	
-	private Context mContext;
-	private boolean isConnect = true;
-	
-	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
-    private final static String mHexStr = "0123456789ABCDEF";  
-    
+	private final static String TAG 			= "SerialPortTtyTop";
+	public final static String 	pathTtyTop 		= "/dev/ttyUSB5";
+	public final static int 	baudrateTtyTop 	= 38400;	
+	protected Application 		mApplication	= null;
+	protected SerialPort 		mSerialPort		= null;
+	protected OutputStream 		mOutputStream	= null;
+	private InputStream 		mInputStream	= null;
+	private ReadThread 			mReadThread		= null;
+	private Context 			mContext		= null;
+	private boolean 			isConnect 		= true;
+
 	public SerialPortTtyTop(Context context) {
 		this.mContext = context;
-		
 		mApplication = (Application) mContext.getApplicationContext();
-
 		Log.d("debug", "FtdiUartConnect is Setup");
 	}
 	
@@ -122,18 +124,21 @@ public class SerialPortTtyTop {
 	}
 
 	private void DisplayError(int resourceId) {
-//		AlertDialog.Builder b = new AlertDialog.Builder(mContext);
-//		b.setTitle("Error");
-//		b.setMessage(resourceId);
-//		b.setPositiveButton("OK", new OnClickListener() {
-//			public void onClick(DialogInterface dialog, int which) {
-//				stopDevice();
-//			}
-//		});
-//		b.show();
+		AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+		mBuilder.setTitle("Error");
+		mBuilder.setMessage(resourceId);
+		mBuilder.setPositiveButton("OK", new OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				stopDevice();
+			}
+		});		
+		AlertDialog mAlertDialog = mBuilder.create();
+		mAlertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+		mAlertDialog.show();
 	}
 	
-	public static String byte2HexStr(byte[] b, int iLen) {
+	private String byte2HexStr(byte[] b, int iLen) {
+		char[] mChars = "0123456789ABCDEF".toCharArray();
 		StringBuilder sb = new StringBuilder();
 		for (int n=0; n<iLen; n++) {
 			sb.append(mChars[(b[n] & 0xFF) >> 4]);
@@ -143,7 +148,8 @@ public class SerialPortTtyTop {
 		return sb.toString().trim().toUpperCase(Locale.US);
 	}
 	
-	public static String hexStr2Str(String hexStr){  
+	private String hexStr2Str(String hexStr){  
+		String mHexStr = "0123456789ABCDEF";
         hexStr = hexStr.toString().trim().replace(" ", "").toUpperCase(Locale.US);
         char[] hexs = hexStr.toCharArray();  
         byte[] bytes = new byte[hexStr.length() / 2];  

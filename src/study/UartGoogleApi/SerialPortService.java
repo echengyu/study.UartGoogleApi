@@ -1,12 +1,16 @@
 package study.UartGoogleApi;
 
+import android.app.AlertDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnClickListener;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.WindowManager;
 
 public class SerialPortService extends Service {
 	
