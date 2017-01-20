@@ -9,18 +9,17 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class SerialPortService extends Service {
-
-	private SerialPortTtyTop mSerialPortTtyTop = null;
-	private IntentFilter mIntentFilter = null;
-	private BroadcastReceiver mBroadcastReceiver = null;
 	
-
+	public static final String TAG = "SerialPortService";
 	public static final String SERVICE_UART_BROADCAST	= "BROADCAST";
-	public static final String SERVICE_UART_READ		= "READ";
+	public static final String SERVICE_UART_READ_STRING	= "READ_STRING";
+	public static final String SERVICE_UART_READ_BYTE	= "READ_BYTE";
 	public static final String SERVICE_UART_SEND_STRING	= "SEND_STRING";
 	public static final String SERVICE_UART_SEND_BYTE	= "SEND_BYTE";
 
-	public static final String TAG = "MyService";
+	private SerialPortTtyTop 	mSerialPortTtyTop 	= null;
+	private IntentFilter 		mIntentFilter 		= null;
+	private BroadcastReceiver 	mBroadcastReceiver 	= null;
 
 	@Override
 	public void onCreate() {
@@ -43,7 +42,7 @@ public class SerialPortService extends Service {
 					byte[] sendByte = intent.getExtras().getByteArray(SERVICE_UART_SEND_BYTE);
 					if (mSerialPortTtyTop != null && sendString != null)
 						mSerialPortTtyTop.sendString(sendString);
-					if (mSerialPortTtyTop != null && (sendByte.length > 0))
+					if (mSerialPortTtyTop != null && sendByte != null)
 						mSerialPortTtyTop.sendByte(sendByte);
 				}
 			};

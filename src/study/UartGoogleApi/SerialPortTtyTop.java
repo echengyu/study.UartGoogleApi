@@ -6,12 +6,8 @@ import java.io.OutputStream;
 import java.security.InvalidParameterException;
 import java.util.Locale;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 import android_serialport_api.SerialPort;
 
@@ -24,31 +20,18 @@ public class SerialPortTtyTop {
 	private InputStream mInputStream;
 	private ReadThread mReadThread;
 	
-	private Handler mHandler;
 	private Context mContext;
 	private boolean isConnect = true;
 	
 	private final static char[] mChars = "0123456789ABCDEF".toCharArray();
-	
-	public SerialPortTtyTop(Handler handler, Context context) {
-		this.mHandler = handler;
-		this.mContext = context;
-		
-		mApplication = (Application) mContext.getApplicationContext();
-
-		Log.d("debug", "FtdiUartConnect is Setup");
-	}
-	
+    private final static String mHexStr = "0123456789ABCDEF";  
+    
 	public SerialPortTtyTop(Context context) {
 		this.mContext = context;
 		
 		mApplication = (Application) mContext.getApplicationContext();
 
 		Log.d("debug", "FtdiUartConnect is Setup");
-	}
-	
-	public SerialPortTtyTop() {
-
 	}
 	
 	public void openDevice() {
@@ -124,10 +107,11 @@ public class SerialPortTtyTop {
 					if (size > 0) {
 						Log.d("debug", "SerialPortTtyTop: " + byte2HexStr(buffer, size));
 						
-						Intent intent=new Intent();
-					    intent.putExtra("UART_READ", byte2HexStr(buffer, size));
-					    intent.setAction("study.UartGoogleApi.SerialPortService");
-					    mContext.sendBroadcast(intent);
+						Intent mIntent = new Intent();
+						mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
+						mIntent.putExtra(SerialPortService.SERVICE_UART_READ_STRING, hexStr2Str(byte2HexStr(buffer, size)));
+						mIntent.putExtra(SerialPortService.SERVICE_UART_READ_BYTE, buffer);
+						mApplication.sendBroadcast(mIntent);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -158,4 +142,18 @@ public class SerialPortTtyTop {
 		}
 		return sb.toString().trim().toUpperCase(Locale.US);
 	}
+	
+	public static String hexStr2Str(String hexStr){  
+        hexStr = hexStr.toString().trim().replace(" ", "").toUpperCase(Locale.US);
+        char[] hexs = hexStr.toCharArray();  
+        byte[] bytes = new byte[hexStr.length() / 2];  
+        int iTmp = 0x00;;  
+
+        for (int i = 0; i < bytes.length; i++){  
+            iTmp = mHexStr.indexOf(hexs[2 * i]) << 4;  
+            iTmp |= mHexStr.indexOf(hexs[2 * i + 1]);  
+            bytes[i] = (byte) (iTmp & 0xFF);  
+        }  
+        return new String(bytes);  
+    }
 }
