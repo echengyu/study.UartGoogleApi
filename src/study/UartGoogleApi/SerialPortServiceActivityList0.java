@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -18,13 +19,15 @@ import android.widget.ListView;
 
 public class SerialPortServiceActivityList0 extends Activity {
 
-	private IntentFilter 		mIntentFilter 		= null;
-	private BroadcastReceiver 	mBroadcastReceiver 	= null;
-	
-	private ListView readListView;
-	private ArrayAdapter<String> resdListAdapter;
-	private EditText sendEditText;
-	private int bufferIndex = 0;
+	private IntentFilter 			mIntentFilter 		= null;
+	private BroadcastReceiver 		mBroadcastReceiver 	= null;
+	private EditText 				sendEditText		= null;
+	private ListView 				readListView		= null;
+	private ArrayAdapter<String> 	resdListAdapter		= null;
+	private long 					readCount 			= 0;
+	private int 					bufferIndex 		= 0;
+	private int 					bufferSize 			= 32;
+	private byte[] 					buffer 				= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,8 @@ public class SerialPortServiceActivityList0 extends Activity {
 
 		resdListAdapter = new ArrayAdapter<String>(this, R.layout.message);
 		readListView.setAdapter(resdListAdapter);
+		
+		buffer = new byte[bufferSize];
 
 		sendEditText.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -56,14 +61,33 @@ public class SerialPortServiceActivityList0 extends Activity {
 			mBroadcastReceiver = new BroadcastReceiver() {
 				@Override
 				public void onReceive(Context context, Intent intent) {
-					String readString = intent.getExtras().getString(SerialPortService.SERVICE_UART_READ_STRING, null);
-					byte[] readdByte = intent.getExtras().getByteArray(SerialPortService.SERVICE_UART_READ_BYTE);
+					String 	readString 	= intent.getExtras().getString(SerialPortService.SERVICE_UART_READ_STRING, null);
+					byte[] 	readByte 	= intent.getExtras().getByteArray(SerialPortService.SERVICE_UART_READ_BYTE);
+					int 	readSize 	= intent.getExtras().getInt(SerialPortService.SERVICE_UART_READ_SIZE);
 //					if (readString != null)
-//						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + readString);
-					if (readdByte != null)
-						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + byte2HexStr(readdByte, readdByte.length));
-					if (bufferIndex > 2147483646)
-						bufferIndex = 0;
+//						resdListAdapter.add("Count: " + (readCount++) + ", Data: " + readString);
+//					if (readByte != null)
+//						resdListAdapter.add("Count: " + (readCount++) + ", Data: " + byte2HexStr(readByte, readByte.length));
+					if (readCount > 2147483646)
+						readCount = 0;	
+					 else
+						if ((readCount % 10000) == 0)
+							resdListAdapter.clear();
+					
+					// Buffer
+					if (readByte != null && readSize > 0) {
+						if (bufferIndex > bufferSize - 1) {
+							buffer = new byte[bufferSize];
+							bufferIndex = 0;
+						} else {
+							if ((bufferIndex + readSize) < bufferSize) 
+								for (int i=0; i<readSize; i++)
+									buffer[bufferIndex + i] = readByte[i];
+							else 
+								resdListAdapter.add("Count: " + (readCount++) + ", Data: " + byte2HexStr(buffer, buffer.length));
+							bufferIndex += readSize;
+						}
+					}
 				}
 			};
 			registerReceiver(mBroadcastReceiver, mIntentFilter);

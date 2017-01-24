@@ -103,7 +103,7 @@ public class SerialPortTtyTop {
 			while(!isInterrupted()) {
 				int size;
 				try {
-					byte[] buffer = new byte[16];
+					byte[] buffer = new byte[32];
 					if (mInputStream == null) return;
 					size = mInputStream.read(buffer);
 					if (size > 0) {
@@ -113,6 +113,7 @@ public class SerialPortTtyTop {
 						mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
 						mIntent.putExtra(SerialPortService.SERVICE_UART_READ_STRING, hexStr2Str(byte2HexStr(buffer, size)));
 						mIntent.putExtra(SerialPortService.SERVICE_UART_READ_BYTE, buffer);
+						mIntent.putExtra(SerialPortService.SERVICE_UART_READ_SIZE, size);
 						mApplication.sendBroadcast(mIntent);
 						
 						if ((hexStr2Str(byte2HexStr(buffer, size)).equals("open"))) {

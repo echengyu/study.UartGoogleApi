@@ -14,6 +14,7 @@ public class SerialPortService extends Service {
 	public static final String SERVICE_UART_BROADCAST	= "BROADCAST";
 	public static final String SERVICE_UART_READ_STRING	= "READ_STRING";
 	public static final String SERVICE_UART_READ_BYTE	= "READ_BYTE";
+	public static final String SERVICE_UART_READ_SIZE	= "READ_SIZE";
 	public static final String SERVICE_UART_SEND_STRING	= "SEND_STRING";
 	public static final String SERVICE_UART_SEND_BYTE	= "SEND_BYTE";
 	private SerialPortTtyTop 	mSerialPortTtyTop 		= null;

@@ -18,13 +18,12 @@ import android.widget.ListView;
 
 public class SerialPortServiceActivityList1 extends Activity {
 
-	private IntentFilter 		mIntentFilter 		= null;
-	private BroadcastReceiver 	mBroadcastReceiver 	= null;
-	
-	private ListView readListView;
-	private ArrayAdapter<String> resdListAdapter;
-	private EditText sendEditText;
-	private int bufferIndex = 0;
+	private IntentFilter 			mIntentFilter 		= null;
+	private BroadcastReceiver 		mBroadcastReceiver 	= null;
+	private EditText 				sendEditText		= null;
+	private ListView 				readListView		= null;
+	private ArrayAdapter<String> 	resdListAdapter		= null;
+	private long 					readCount 			= 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +42,13 @@ public class SerialPortServiceActivityList1 extends Activity {
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 				(keyCode == KeyEvent.KEYCODE_ENTER)) {
 					// Perform action on key press
-				    sendString(sendEditText.getText() + "");
+					sendString(sendEditText.getText() + "");
 					return true;
 				}
 				return false;
 			}
 		});
-		
+
 		// UART Read BroadcastReceiver
 		if (mIntentFilter == null && mBroadcastReceiver == null) {
 			mIntentFilter = new IntentFilter(SerialPortService.SERVICE_UART_BROADCAST);
@@ -57,18 +56,21 @@ public class SerialPortServiceActivityList1 extends Activity {
 				@Override
 				public void onReceive(Context context, Intent intent) {
 					String readString = intent.getExtras().getString(SerialPortService.SERVICE_UART_READ_STRING, null);
-					byte[] readdByte = intent.getExtras().getByteArray(SerialPortService.SERVICE_UART_READ_BYTE);
-//					if (readString != null)
-//						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + readString);
-					if (readdByte != null)
-						resdListAdapter.add("Count: " + (bufferIndex++) + ", Data: " + byte2HexStr(readdByte, readdByte.length));
-					if (bufferIndex > 2147483646)
-						bufferIndex = 0;
+					byte[] readByte = intent.getExtras().getByteArray(SerialPortService.SERVICE_UART_READ_BYTE);
+					if (readString != null)
+						resdListAdapter.add("Count: " + (readCount++) + ", Data: " + readString);
+					if (readByte != null)
+						resdListAdapter.add("Count: " + (readCount++) + ", Data: " + byte2HexStr(readByte, readByte.length));
+					if (readCount > 2147483646)
+						readCount = 0;	
+					 else
+						if ((readCount % 10000) == 0)
+							resdListAdapter.clear();
 				}
 			};
 			registerReceiver(mBroadcastReceiver, mIntentFilter);
 		}
-		
+
 		final Button sendButton = (Button)findViewById(R.id.sendButton);
 		sendButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -81,30 +83,30 @@ public class SerialPortServiceActivityList1 extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		resdListAdapter.clear();
-		
+
 		if (mIntentFilter != null | mBroadcastReceiver != null) {
 			unregisterReceiver(mBroadcastReceiver);
 			mIntentFilter = null;
 			mBroadcastReceiver = null;
 		}
 	}
-	
+
 	// UART Send String BroadcastReceiver
 	private void sendString(String sendString) {
 		Intent mIntent = new Intent();
 		mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
 		mIntent.putExtra(SerialPortService.SERVICE_UART_SEND_STRING, sendString + "");
-	    sendBroadcast(mIntent);
+		sendBroadcast(mIntent);
 	}
-	
+
 	// UART Send Byte BroadcastReceiver
 	private void sendByte(byte[] sendByte) {
 		Intent mIntent = new Intent();
 		mIntent.setAction(SerialPortService.SERVICE_UART_BROADCAST);
 		mIntent.putExtra(SerialPortService.SERVICE_UART_SEND_BYTE, sendByte);
-	    sendBroadcast(mIntent);
+		sendBroadcast(mIntent);
 	}
-	
+
 	private String byte2HexStr(byte[] b, int iLen) {
 		char[] mChars = "0123456789ABCDEF".toCharArray();
 		StringBuilder sb = new StringBuilder();
